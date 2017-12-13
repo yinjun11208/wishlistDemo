@@ -1,86 +1,112 @@
 
 package com.sample.wishlistDemo.api.generated;
 
+import java.net.URI;
+import java.net.URL;
+import java.util.List;
+import java.util.Optional;
+
 import javax.inject.Singleton;
 import javax.ws.rs.core.Response;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.sample.wishlistDemo.api.generated.WishlistItem;
-import com.sample.wishlistDemo.api.generated.YaasAwareParameters;
+import com.sample.wishlistDemo.api.wishlist.WishlistDocuRepo;
 
 /**
-* Resource class containing the custom logic. Please put your logic here!
-*/
+ * Resource class containing the custom logic. Please put your logic here!
+ */
 @Component("apiWishlistsResource")
 @Singleton
-public class DefaultWishlistsResource implements com.sample.wishlistDemo.api.generated.WishlistsResource
-{
+public class DefaultWishlistsResource implements WishlistsResource {
 	@javax.ws.rs.core.Context
 	private javax.ws.rs.core.UriInfo uriInfo;
 
+	@Autowired
+	private WishlistDocuRepo wishlistRepo;
+
 	/* GET / */
 	@Override
-	public Response get(final YaasAwareParameters yaasAware)
-	{
-		// place some logic here
-		return Response.ok()
-			.entity(new java.util.ArrayList<Wishlist>()).build();
+	public Response get(final YaasAwareParameters yaasAware) {
+		List<Wishlist> wishlists = wishlistRepo.get();
+		if (wishlists != null) {
+			return Response.ok().entity(wishlists).build();
+		} else {
+			return Response.serverError().build();
+		}
 	}
 
 	/* POST / */
 	@Override
-	public Response post(final YaasAwareParameters yaasAware, final Wishlist wishlist)
-	{
-		// place some logic here
-		return Response.created(uriInfo.getAbsolutePath())
-			.build();
+	public Response post(final YaasAwareParameters yaasAware, final Wishlist wishlist) {
+		if (wishlistRepo.post(wishlist)) {
+			URI uri = uriInfo.getAbsolutePath();
+
+			try {
+				uri = (new URL(uri.toURL(), wishlist.getId())).toURI();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return Response.created(uri).entity(wishlist).build();
+		} else {
+			return Response.serverError().build();
+		}
 	}
 
 	/* GET /{wishlistId} */
 	@Override
-	public Response getByWishlistId(final YaasAwareParameters yaasAware, final java.lang.String wishlistId)
-	{
-		// place some logic here
-		return Response.ok()
-			.entity(new Wishlist()).build();
+	public Response getByWishlistId(final YaasAwareParameters yaasAware, final String wishlistId) {
+		Optional<Wishlist> wishlist = wishlistRepo.get(wishlistId);
+		if (wishlist.isPresent()) {
+			return Response.ok().entity(wishlist.get()).build();
+		} else {
+			return Response.serverError().build();
+		}
 	}
 
 	/* PUT /{wishlistId} */
 	@Override
-	public Response putByWishlistId(final YaasAwareParameters yaasAware, final java.lang.String wishlistId, final Wishlist wishlist)
-	{
-		// place some logic here
-		return Response.ok()
-			.build();
+	public Response putByWishlistId(final YaasAwareParameters yaasAware, final String wishlistId,
+			final Wishlist wishlist) {
+		if (wishlistRepo.put(wishlistId, wishlist)) {
+			return Response.ok().entity(wishlist).build();
+		} else {
+			return Response.serverError().build();
+		}
 	}
 
 	/* DELETE /{wishlistId} */
 	@Override
-	public Response deleteByWishlistId(final YaasAwareParameters yaasAware, final java.lang.String wishlistId)
-	{
-		// place some logic here
-		return Response.noContent()
-			.build();
+	public Response deleteByWishlistId(final YaasAwareParameters yaasAware, final String wishlistId) {
+		if (wishlistRepo.delete(wishlistId)) {
+			return Response.noContent().build();
+		} else {
+			return Response.serverError().build();
+		}
 	}
 
+	/* GET /{wishlistId}/wishlistItems */
 	@Override
-	public
-	Response getByWishlistIdWishlistItems(
-			final YaasAwareParameters yaasAware,  final java.lang.String wishlistId)
-	{
-		// place some logic here
-		return Response.ok()
-				.entity(new java.util.ArrayList<WishlistItem>()).build();
+	public Response getByWishlistIdWishlistItems(final YaasAwareParameters yaasAware, final String wishlistId) {
+		List<WishlistItem> items = wishlistRepo.getItems(wishlistId);
+		if (items != null) {
+			return Response.ok().entity(items).build();
+		} else {
+			return Response.serverError().build();
+		}
 	}
 
+	/* POST /{wishlistId}/wishlistItems */
 	@Override
-	public
-	Response postByWishlistIdWishlistItems(final YaasAwareParameters yaasAware,
-			final java.lang.String wishlistId, final WishlistItem wishlistItem){
-		// place some logic here
-		return Response.noContent()
-					.build();
+	public Response postByWishlistIdWishlistItems(final YaasAwareParameters yaasAware, final String wishlistId,
+			final WishlistItem wishlistItem) {
+		if (wishlistRepo.postItems(wishlistId, wishlistItem)) {
+			return Response.created(uriInfo.getAbsolutePath()).entity(wishlistItem).build();
+		} else {
+			return Response.serverError().build();
+		}
 	}
 
 }
