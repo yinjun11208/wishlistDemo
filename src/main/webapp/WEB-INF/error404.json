@@ -1,0 +1,6 @@
+{
+  "message" : "HTTP 404 Not Found",
+  "moreInfo" : "https://api.yaas.io/patterns/errortypes.html",
+  "status" : 404,
+  "type" : "element_resource_non_existing"
+}

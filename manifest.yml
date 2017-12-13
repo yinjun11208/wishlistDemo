@@ -1,0 +1,20 @@
+%YAML 1.1
+# This file is a Cloud Foundry application manifest.
+# Use it to deploy your wishlistDemo service to a Cloud Foundry environment.
+# To do so with the Cloud Foundry CLI-tool, execute the following command in this directory:
+#
+#     cf push
+#
+# For more information see:
+# http://docs.cloudfoundry.org/devguide/deploy-apps/manifest.html
+---
+applications:
+- name: wishlistDemo
+  instances: 1
+  memory: 512M
+  host: wishlistDemo
+  path: target/wishlistDemo.war
+  env:
+    # used in logging format and API Console
+    APP_NAME: wishlistDemo
+    APP_VERSION: 1.0-SNAPSHOT

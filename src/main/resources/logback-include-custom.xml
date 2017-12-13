@@ -1,0 +1,3 @@
+<included>
+	<logger name="com.sample.wishlistDemo" level="DEBUG" />
+</included>

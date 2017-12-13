@@ -1,0 +1,6 @@
+{
+  "message" : "HTTP 500 Internal Server Error",
+  "moreInfo" : "https://api.yaas.io/patterns/errortypes.html",
+  "status" : 500,
+  "type" : "internal_service_error"
+}
